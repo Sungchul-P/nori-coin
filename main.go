@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/Sungchul-P/nori-coin/blockchain"
 	"github.com/Sungchul-P/nori-coin/cli"
+	"github.com/Sungchul-P/nori-coin/db"
 )
 
 func main() {
-	blockchain.Blockchain()
+	defer db.Close()
 	cli.Start()
 }
