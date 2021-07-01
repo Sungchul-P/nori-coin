@@ -19,3 +19,9 @@ func ToBytes(i interface{}) []byte {
 	HandleErr(encoder.Encode(i))
 	return aBuffer.Bytes()
 }
+
+// FromBytes data를 지정한 타입으로 변환(디코딩)
+func FromBytes(i interface{}, data []byte) {
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	HandleErr(decoder.Decode(i))
+}

@@ -1,8 +1,6 @@
 package blockchain
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"github.com/Sungchul-P/nori-coin/db"
 	"github.com/Sungchul-P/nori-coin/utils"
@@ -19,8 +17,7 @@ var b *blockchain
 var once sync.Once
 
 func (b *blockchain) restore(data []byte) {
-	decoder := gob.NewDecoder(bytes.NewReader(data))
-	utils.HandleErr(decoder.Decode(b))
+	utils.FromBytes(b, data)
 }
 
 func (b *blockchain) persist() {
@@ -43,11 +40,10 @@ func Blockchain() *blockchain {
 			if checkpoint == nil {
 				b.AddBlock("Genesis")
 			} else {
-				fmt.Println("Restoring...")
 				b.restore(checkpoint)
 			}
 		})
 	}
-	fmt.Printf("NewestHash: %s\nHeight:%d\n", b.NewestHash, b.Height)
+	fmt.Println(b.NewestHash)
 	return b
 }
