@@ -1,7 +1,7 @@
 package main
 
-import "github.com/Sungchul-P/nori-coin/cli"
+import "github.com/Sungchul-P/nori-coin/blockchain"
 
 func main() {
-	cli.Start()
+	blockchain.Blockchain()
 }
