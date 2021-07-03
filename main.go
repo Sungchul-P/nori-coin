@@ -1,11 +1,23 @@
 package main
 
 import (
-	"github.com/Sungchul-P/nori-coin/cli"
-	"github.com/Sungchul-P/nori-coin/db"
+	"crypto/sha256"
+	"fmt"
+	"strings"
 )
 
 func main() {
-	defer db.Close()
-	cli.Start()
+	difficulty := 4
+	target := strings.Repeat("0", difficulty)
+	nonce := 1
+	for {
+		hash := fmt.Sprintf("%x", sha256.Sum256([]byte("hello"+fmt.Sprint(nonce))))
+		fmt.Printf("Hash:%s\nTarget:%s\nNonce:%d\n\n", hash, target, nonce)
+		if strings.HasPrefix(hash, target) {
+			return
+		} else {
+			nonce++
+		}
+
+	}
 }
