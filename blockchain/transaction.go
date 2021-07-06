@@ -96,3 +96,12 @@ func (m *mempool) AddTx(to string, amount int) error {
 	m.Txs = append(m.Txs, tx)
 	return nil
 }
+
+// TxToConfirm mempool에 있는 트랜잭션을 모두 가져오고, 비운다.
+func (m *mempool) TxToConfirm() []*Tx {
+	coinbase := makeCoinbaseTx("nori")
+	txs := m.Txs
+	txs = append(txs, coinbase)
+	m.Txs = nil
+	return txs
+}
