@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"fmt"
 	"github.com/Sungchul-P/nori-coin/db"
 	"github.com/Sungchul-P/nori-coin/utils"
 	"sync"
@@ -29,7 +28,7 @@ func (b *blockchain) restore(data []byte) {
 }
 
 func (b *blockchain) AddBlock() {
-	block := createBlock(b.NewestHash, b.Height+1)
+	block := createBlock(b.NewestHash, b.Height+1, getDifficulty(b))
 	b.NewestHash = block.Hash
 	b.Height = block.Height
 	b.CurrentDifficulty = block.Difficulty
@@ -70,7 +69,7 @@ func recalculateDifficulty(b *blockchain) int {
 	return b.CurrentDifficulty
 }
 
-func difficulty(b *blockchain) int {
+func getDifficulty(b *blockchain) int {
 	if b.Height == 0 {
 		return defaultDifficulty
 	} else if b.Height%difficultyInterval == 0 {
@@ -117,19 +116,17 @@ func BalanceByAddress(address string, b *blockchain) int {
 
 // Blockchain 은 정확히 한번만(exactly once) 초기화(최초 블록 생성) 한다.
 func Blockchain() *blockchain {
-	if b == nil {
-		once.Do(func() {
-			b = &blockchain{
-				Height: 0,
-			}
-			checkpoint := db.Checkpoint()
-			if checkpoint == nil {
-				b.AddBlock()
-			} else {
-				b.restore(checkpoint)
-			}
-		})
-	}
-	fmt.Println(b.NewestHash)
+	once.Do(func() {
+		b = &blockchain{
+			Height: 0,
+		}
+		checkpoint := db.Checkpoint()
+		if checkpoint == nil {
+			b.AddBlock()
+		} else {
+			b.restore(checkpoint)
+		}
+	})
+
 	return b
 }

@@ -13,7 +13,7 @@ type Block struct {
 	Hash         string `json:"hash"`
 	PrevHash     string `json:"prevHash,omitempty"`
 	Height       int    `json:"height"`
-	Difficulty   int    `json:"difficulty"`
+	Difficulty   int    `json:"getDifficulty"`
 	Nonce        int    `json:"nonce"`
 	Timestamp    int    `json:"timestamp"`
 	Transactions []*Tx  `json:"transactions"`
@@ -54,12 +54,12 @@ func FindBlock(hash string) (*Block, error) {
 	return block, nil
 }
 
-func createBlock(prevHash string, height int) *Block {
+func createBlock(prevHash string, height, diff int) *Block {
 	block := &Block{
 		Hash:       "",
 		PrevHash:   prevHash,
 		Height:     height,
-		Difficulty: difficulty(Blockchain()),
+		Difficulty: diff,
 		Nonce:      0,
 	}
 	block.mine()
