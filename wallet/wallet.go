@@ -1,13 +1,11 @@
 package wallet
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
 	"github.com/Sungchul-P/nori-coin/utils"
+	"math/big"
 )
 
 const (
@@ -18,33 +16,24 @@ const (
 
 func Start() {
 
-	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-
-	keyAsBytes, err := x509.MarshalECPrivateKey(privateKey)
-
-	fmt.Printf("[Private Key]\n%x\n\n", keyAsBytes)
-
+	privBytes, err := hex.DecodeString(privateKey)
 	utils.HandleErr(err)
 
-	message := "11.2 Signing Messages"
-
-	hashedMessage := utils.Hash(message)
-
-	fmt.Println("hashedMessage : ", hashedMessage)
-
-	hashAsBytes, err := hex.DecodeString(hashedMessage)
-
+	retoredKey, err := x509.ParseECPrivateKey(privBytes)
 	utils.HandleErr(err)
 
-	r, s, err := ecdsa.Sign(rand.Reader, privateKey, hashAsBytes)
+	fmt.Println(retoredKey)
+	fmt.Println()
+	sigBytes, err := hex.DecodeString(signature)
+	rBytes := sigBytes[:len(sigBytes)/2]
+	sBytes := sigBytes[len(sigBytes)/2:]
+	fmt.Printf("%d\n\n%d\n\n%d\n\n", sigBytes, rBytes, sBytes)
 
-	signature := append(r.Bytes(), s.Bytes()...)
+	var bigR, bigS = big.Int{}, big.Int{}
 
-	utils.HandleErr(err)
+	bigR.SetBytes(rBytes)
+	bigS.SetBytes(sBytes)
 
-	fmt.Printf("\n[Signature]\n%X\n", signature)
-
-	ok := ecdsa.Verify(&privateKey.PublicKey, hashAsBytes, r, s)
-
-	fmt.Println(ok)
+	fmt.Println()
+	fmt.Println(bigR, bigS)
 }
