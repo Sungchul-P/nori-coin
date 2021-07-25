@@ -5,5 +5,5 @@ import "github.com/Sungchul-P/nori-coin/wallet"
 func main() {
 	//defer db.Close()
 	//cli.Start()
-	wallet.Start()
+	wallet.Wallet()
 }
