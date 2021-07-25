@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/hex"
 	"fmt"
@@ -36,4 +37,11 @@ func Start() {
 
 	fmt.Println()
 	fmt.Println(bigR, bigS)
+
+	hashBytes, err := hex.DecodeString(hashedMessage)
+	utils.HandleErr(err)
+
+	ok := ecdsa.Verify(&retoredKey.PublicKey, hashBytes, &bigR, &bigS)
+	fmt.Println()
+	fmt.Println(ok)
 }
