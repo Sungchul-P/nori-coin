@@ -1,12 +1,26 @@
 package main
 
 import (
-	"github.com/Sungchul-P/nori-coin/cli"
-	"github.com/Sungchul-P/nori-coin/db"
+	"fmt"
+	"time"
 )
 
+func countToTen(c chan int) {
+	for i := range [10]int{} {
+		time.Sleep(2 * time.Second)
+		fmt.Printf("sending %d\n", i)
+		c <- i
+	}
+}
+
 func main() {
-	defer db.Close()
-	cli.Start()
-	//wallet.Wallet()
+	//defer db.Close()
+	//cli.Start()
+	c := make(chan int)
+	go countToTen(c)
+	for {
+		a := <-c
+		fmt.Printf("received %d\n", a)
+	}
+
 }
