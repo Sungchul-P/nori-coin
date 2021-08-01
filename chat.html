@@ -7,6 +7,16 @@
 <body>
     <script>
         const socket = new WebSocket("ws://localhost:4000/ws")
+        socket.addEventListener("close", () => console.log("closed"))
+        setTimeout(() => {
+            socket.send("hello ws! js < go")
+        }, 5000)
+        setTimeout(() => {
+            socket.send("hello again!")
+        }, 10000)
+        setTimeout(() => {
+            socket.send("hello !!!!!")
+        }, 15000)
     </script>
 </body>
 </html>
