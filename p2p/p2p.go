@@ -5,6 +5,7 @@ import (
 	"github.com/Sungchul-P/nori-coin/utils"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"time"
 )
 
 var upgrader = websocket.Upgrader{}
@@ -17,7 +18,13 @@ func Upgrade(rw http.ResponseWriter, r *http.Request) {
 	utils.HandleErr(err)
 	for {
 		_, p, err := conn.ReadMessage()
-		utils.HandleErr(err)
-		fmt.Printf("%s\n\n", p)
+		if err != nil {
+			conn.Close()
+			break
+		}
+		fmt.Printf("Just got: %s\n\n", p)
+		time.Sleep(5 * time.Second)
+		message := fmt.Sprintf("New Message: %s", p)
+		utils.HandleErr(conn.WriteMessage(websocket.TextMessage, []byte(message)))
 	}
 }
