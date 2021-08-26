@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"sync"
-	"time"
 )
 
 type peers struct {
@@ -37,10 +36,8 @@ func AllPeers(p *peers) []string {
 
 func (p *peer) close() {
 	Peers.m.Lock()
-	defer func() {
-		time.Sleep(20 * time.Second)
-		Peers.m.Unlock()
-	}()
+	Peers.m.Unlock()
+
 	p.conn.Close()
 	delete(Peers.v, p.key)
 }
@@ -48,11 +45,13 @@ func (p *peer) close() {
 func (p *peer) read() {
 	defer p.close()
 	for {
-		_, m, err := p.conn.ReadMessage()
+		m := Message{}
+		err := p.conn.ReadJSON(&m)
 		if err != nil {
 			break // exit this for loop
 		}
-		fmt.Printf("%s", m)
+		fmt.Println(m.Kind)
+		fmt.Println(m.Payload)
 	}
 }
 
