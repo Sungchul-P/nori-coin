@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"fmt"
+	"github.com/Sungchul-P/nori-coin/blockchain"
 	"github.com/Sungchul-P/nori-coin/utils"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -29,4 +30,10 @@ func AddPeer(address, port, openPort string) {
 	utils.HandleErr(err)
 	p := initPeer(conn, address, port)
 	sendNewestBlock(p)
+}
+
+func BroadcastNewBlock(b *blockchain.Block) {
+	for _, p := range Peers.v {
+		notifyNewBlock(b, p)
+	}
 }
