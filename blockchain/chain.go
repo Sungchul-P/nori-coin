@@ -23,6 +23,10 @@ type blockchain struct {
 var b *blockchain
 var once sync.Once
 
+func persistBlock(b *Block) {
+	db.SaveBlock(b.Hash, utils.ToBytes(b))
+}
+
 func (b *blockchain) restore(data []byte) {
 	utils.FromBytes(b, data)
 }
@@ -149,4 +153,15 @@ func Blockchain() *blockchain {
 	})
 
 	return b
+}
+
+func (b *blockchain) Replace(newBlocks []*Block) {
+	b.CurrentDifficulty = newBlocks[0].Difficulty
+	b.Height = len(newBlocks)
+	b.NewestHash = newBlocks[0].Hash
+	persistBlockchain(b)
+	db.EmptyBlocks()
+	for _, block := range newBlocks {
+		persistBlock(block)
+	}
 }
