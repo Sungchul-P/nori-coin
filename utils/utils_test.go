@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -38,7 +39,7 @@ func TestToBytes(t *testing.T) {
 	b := ToBytes(s)
 	k := reflect.TypeOf(b).Kind()
 	if k != reflect.Slice {
-		t.Errorf("ToBytes should return a slice of bytes got %s", reflect.TypeOf(b).Kind())
+		t.Errorf("ToBytes should return a slice of bytes got %s", k)
 	}
 }
 
@@ -75,5 +76,33 @@ func TestHandleErr(t *testing.T) {
 	HandleErr(err)
 	if !called {
 		t.Error("HandleError should call fn")
+	}
+}
+
+func TestFromBytes(t *testing.T) {
+	type testStruct struct {
+		Test string
+	}
+	var restored testStruct
+	ts := testStruct{"test"}
+	b := ToBytes(ts)
+	FromBytes(&restored, b)
+	if !reflect.DeepEqual(ts, restored) {
+		t.Error("FromBytes() should restore struct.")
+	}
+}
+
+func TestToJSON(t *testing.T) {
+	type testStruct struct{ Test string }
+	s := testStruct{"test"}
+	b := ToJSON(s)
+	k := reflect.TypeOf(b).Kind()
+	if k != reflect.Slice {
+		t.Errorf("Expected %v and got %v", reflect.Slice, k)
+	}
+	var restored testStruct
+	json.Unmarshal(b, &restored)
+	if !reflect.DeepEqual(s, restored) {
+		t.Error("ToJSON() should encode to JSON correctly.")
 	}
 }
