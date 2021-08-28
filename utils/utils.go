@@ -1,3 +1,4 @@
+// Package utils 애플리케이션 전역에서 사용되는 함수들을 포함한다
 package utils
 
 import (
